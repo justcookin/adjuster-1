@@ -1,0 +1,32 @@
+package Adjuster;
+
+use Dancer;
+use Text::Aspell;
+set serializer => 'XML';
+#set serializer => 'Dumper'; #un-comment this for json format responses
+
+get '/' => sub{
+    return {message => "First rest Web Service with Perl and Dancer"};
+};
+
+get '/adjust-image' => sub {
+  template 'adjust-image';
+
+
+};
+
+get '/spellcheck/:word' => sub {
+    my $word = params->{word};
+        my $speller = Text::Aspell->new;
+    $speller->set_option('sug-mode','fast');
+  if ($speller->check( $word )) {
+    {SpellingCorrect => "true",
+     Word => $word,};
+  } else {
+    my @suggestions = $speller->suggest( $word );
+    {response => \@suggestions };
+  }
+
+};
+
+dance;
